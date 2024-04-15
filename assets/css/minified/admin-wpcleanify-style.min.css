@@ -1,0 +1,247 @@
+body.toplevel_page_wp-cleanify-settings #wpcontent {
+  padding-left: 0;
+}
+.container {
+  max-width: 90%;
+  margin: 0 auto;
+}
+/*-----------------------------
+Top Header
+-----------------------------*/
+section.wp-cleanify-settings-wrapper {
+  background-color: #fafafa;
+}
+
+.wp-cleanify-settings-header {
+  padding: 0px 30px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #b5bfc9;
+  position: sticky;
+  top: 32px;
+  z-index: 9;
+}
+
+.wp-cleanify-settings-header--shadow {
+  box-shadow: 0 0 #0000, 0 0 #0000, 0 0 #0000, 0 0 #0000,
+    0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.wp-cleanify-header-isrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wp-cleanify-header-lside {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.wp-cleanify-header-logo {
+  border-right: 1px solid #b5bfc9;
+  padding: 15px 15px 15px 0;
+}
+.wp-cleanify-header-logo__image {
+  max-width: 160px;
+}
+
+.wp-cleanify-header-msg__title {
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0;
+  color: #1d2327;
+}
+
+.wp-cleanify-header-rside {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  font-size: 14px;
+}
+
+.wp-cleanify-header-version {
+  border-left: 1px solid #999;
+  padding-left: 20px;
+}
+
+/*------------------------------------
+Toggle button
+------------------------------------*/
+* {
+  box-sizing: border-box;
+}
+
+.checkbox_item .checkbox_wrap {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  width: 100px;
+  margin: 0 auto 50px;
+}
+
+.checkbox_item .checkbox_wrap .checkbox_inp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  z-index: 1;
+}
+
+.checkbox_item .checkbox_wrap .checkbox_mark {
+  display: inline-block;
+  position: relative;
+  border-radius: 25px;
+}
+
+.checkbox_item .checkbox_wrap .checkbox_mark:before,
+.checkbox_item .checkbox_wrap .checkbox_mark:after {
+  content: "";
+  position: absolute;
+  transition: all 0.5s ease;
+}
+
+/* basic styles */
+.checkbox_item.citem_1 .checkbox_wrap .checkbox_mark {
+  background: #f0f0f0;
+  width: 55px;
+  height: 25px;
+  padding: 2px;
+  border: 1px solid #b5bfc9;
+}
+
+.checkbox_item.citem_1 .checkbox_wrap .checkbox_mark:before {
+  top: 2px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  background: #6c7781;
+  border-radius: 50%;
+}
+
+.checkbox_item.citem_1 .checkbox_wrap .checkbox_inp:checked ~ .checkbox_mark {
+  background: #069de3;
+  border-color: transparent;
+}
+
+.checkbox_item.citem_1
+  .checkbox_wrap
+  .checkbox_inp:checked
+  ~ .checkbox_mark:before {
+  left: 31px;
+  background: #fff;
+}
+/*-----------------
+Content
+-----------------*/
+.wp-cleanify-settings-content {
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+.grid {
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-flow: row wrap;
+  flex-flow: row wrap;
+  gap: 1.5rem;
+  display: flex;
+}
+
+.wp-celanify-box {
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 288px;
+  flex: 0 0 288px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  text-align: center;
+  flex: 0 0 288px;
+  border: 1px solid #b5bfc9;
+  border-radius: 6px;
+  background-color: #fff;
+  position: relative;
+}
+.wp-cleanify-box-header {
+  text-align: center;
+  padding: 30px 20px 0 20px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+}
+.wp-cleanify-icon img {
+  width: 52px;
+  height: 52px;
+}
+.wp-cleanify-box-content {
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 40px;
+}
+
+.wp-cleanify-box-content p {
+  color: #7f868d;
+  margin-top: 0;
+  padding: 0 10px;
+  font-size: 14px;
+  font-style: normal;
+  line-height: 1.5;
+}
+
+.wp-celanify-box-footer {
+  box-sizing: border-box;
+  width: 100%;
+  height: 60px;
+  margin: 0;
+  padding: 15px 20px;
+  border-top: 1px solid #b5bfc9;
+  border-radius: 0 0 6px 6px;
+  background: #f8f9fa;
+  position: absolute;
+  bottom: 0;
+}
+
+.wp-cleanify-settings-message {
+  display: flex;
+  color: #000;
+  align-items: center;
+  align-content: center;
+  gap: 5px;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #e5e7eb;
+  width: 300px;
+  position: fixed;
+  top: 36px;
+  right: 40%;
+  z-index: 999;
+  background: #ffffff;
+  justify-content: space-between;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+}
+.wp-cleanify-msg-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wp-cleanify-settings-message img {
+  width: 24px;
+  height: 24px;
+}
+
+.wp-cleanify-msg-text {
+  font-size: 15px;
+}
+
+.wp-cleanify-msg-close img {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
