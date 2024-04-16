@@ -1,0 +1,14 @@
+{
+	"*.js": [
+		"lint:js:fix",
+		"lint:js"
+	],
+	"*.{css,scss}": [
+		"lint:styles:fix",
+		"lint:styles"
+	],
+	"*.php": [
+		"composer format",
+		"composer lint"
+	]
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress Coding Standards for eFax Theme">
+	<description>Sniffs for WordPress Plugin, with minor modifications for wp-cleanify</description>
+    
+	<!-- Specify the target directory or file -->
+    <file>.</file>
+
+	<!-- Specify the file extention to check -->
+	<arg name="extensions" value="php"/>
+
+	<!-- Use rulesets -->
+	<rule ref="WordPress-Core"/>
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="efax-unified"/>
+				<element value="default"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Exclude third party libraries -->
+	<exclude-pattern>node_modules/*</exclude-pattern>
+	<exclude-pattern>./vendor/*</exclude-pattern>
+</ruleset>

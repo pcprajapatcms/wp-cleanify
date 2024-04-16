@@ -133,7 +133,7 @@ final class WP_Cleanify_Loader {
 	 * @since 1.0.0
 	 * @return void
 	 */
-	function load_plugin() {
+	public function load_plugin() {
 		$this->load_textdomain();
 		$this->includes();
 		$this->load_core_files();
@@ -159,7 +159,7 @@ final class WP_Cleanify_Loader {
 	 * @since 1.0.0
 	 */
 	public function includes() {
-		require WP_CLEANIFY_DIR . 'includes/wp-cleanify-helpers.php';
+		require WP_CLEANIFY_DIR . 'includes/class-wp-cleanify-helper.php';
 	}
 
 	/**
@@ -168,10 +168,9 @@ final class WP_Cleanify_Loader {
 	 * @since 1.0.0
 	 */
 	public function wp_cleanify_style_enqueue_scripts() {
-		if(isset($_GET["page"]) && "wp-cleanify-settings" === $_GET["page"]) {
-			WP_Cleanify_Helper::cleanify_enqueue_scripts('wpcleanify-grid-style', 'wpcleanify-grid', 'css');
-			WP_Cleanify_Helper::cleanify_enqueue_scripts('admin-wpcleanify-style', 'admin-wpcleanify-style', 'css');
-			WP_Cleanify_Helper::cleanify_enqueue_scripts('admin-wpcleanify-script', 'admin-wpcleanify-script', 'js');
+		if ( isset( $_GET['page'] ) && 'wp-cleanify-settings' === $_GET['page'] ) {
+			WP_Cleanify_Helper::cleanify_enqueue_scripts( 'admin-wpcleanify-style', 'admin-wpcleanify-style', 'css' );
+			WP_Cleanify_Helper::cleanify_enqueue_scripts( 'admin-wpcleanify-script', 'admin-wpcleanify-script', 'js' );
 		}
 	}
 
@@ -181,7 +180,7 @@ final class WP_Cleanify_Loader {
 	 * @since 1.0.0
 	 */
 	public function options() {
-		require WP_CLEANIFY_DIR . 'settings/options.php';
+		require WP_CLEANIFY_DIR . 'settings/class-wp-cleanify-setting-options.php';
 	}
 
 	/**
