@@ -57,7 +57,7 @@ class WP_Cleanify_Option_Page {
 				<div class="wp-cleanify-header-isrow">
 					<div class="wp-cleanify-header-lside">
 						<div class="wp-cleanify-header-logo">
-							<img class="wp-cleanify-header-logo__image" src="<?php echo WP_CLEANIFY_URL . 'assets/images/wp-cleanify-logo.svg'; ?>" alt="wp cleanify" width="160" heigh="35">
+							<img class="wp-cleanify-header-logo__image" src="<?php echo WP_CLEANIFY_URL . 'assets/images/wp-cleanify-logo.png'; ?>" alt="wp cleanify" width="160" heigh="35">
 						</div>
 						<div class="wp-cleanify-header-msg">
 							<h1 class="wp-cleanify-header-msg__title">WP Cleanify Settings</h1>
@@ -143,14 +143,17 @@ class WP_Cleanify_Option_Page {
 		$redirect_feeds           = '<div class="wp-cleanify-icon">
             <img src="' . WP_CLEANIFY_URL . 'assets/images/icons/redirect-feed.svg" alt="redirect feed" width="52" height="52">
         </div>';
+		$change_login_url_icon           = '<div class="wp-cleanify-icon">
+            <img src="' . WP_CLEANIFY_URL . 'assets/images/icons/redirect-feed.svg" alt="redirect feed" width="52" height="52">
+        </div>';
 		$checkbox_fields          = array(
 			'_wp_cleanify_remove_emoji'             => '<div class="wp-cleanify-box-header">' . $remove_emoji_icon_svg . '<div class="wp-cleanify-box-content"><h3>Remove Emoji Scripts</h3> <p>Remove the emoji scripts and styles from both the front-end and admin areas of your WordPress site.</p></div></div>',
 
 			'_wp_cleanify_remove_full_site_editing' => '<div class="wp-cleanify-box-header">' . $remove_full_site_editing . '<div class="wp-cleanify-box-content"><h3>Remove Global Styles </h3> <p>Remove various aspects of the Global Styles feature, such as default styles, custom color palettes, custom font sizes.</p></div></div>',
 
-			'_wp_cleanify_remove_rsd_links'         => '<div class="wp-cleanify-box-header">' . $remove_rsd_links . '<div class="wp-cleanify-box-content"><h3>Remove RSD Links </h3> <p> Remove the RSD link from your WordPress site\'s header. The RSD link should no longer appear in the HTML output.</p></div></div>',
+			'_wp_cleanify_remove_rsd_links'         => '<div class="wp-cleanify-box-header">' . $remove_rsd_links . '<div class="wp-cleanify-box-content"><h3>Remove RSD Links </h3> <p>Removing RSD links from WordPress improves security and simplifies code, leading to a safer website and better performance.</p></div></div>',
 
-			'_wp_cleanify_remove_shortlink'         => '<div class="wp-cleanify-box-header">' . $remove_shortlink . '<div class="wp-cleanify-box-content"><h3>Remove Shortlink </h3> <p> Prevent WordPress from outputting the shortlink meta tag in the HTML header and tag should no longer appear in the HTML.</p></div></div>',
+			'_wp_cleanify_remove_shortlink'         => '<div class="wp-cleanify-box-header">' . $remove_shortlink . '<div class="wp-cleanify-box-content"><h3>Remove Shortlink </h3> <p>Removing shortlinks in WordPress improves SEO, builds trust with transparent links, enables accurate tracking, and ensures accessibility, enhancing user experience and website performance.</p></div></div>',
 
 			'_wp_cleanify_disable_embed'            => '<div class="wp-cleanify-box-header">' . $disable_embed . '<div class="wp-cleanify-box-content"><h3>Disable Embed </h3> <p> Turn off oEmbed auto-discovery, remove oEmbed discovery links, and prevent oEmbed-specific JavaScript.</p></div></div>',
 
@@ -167,6 +170,10 @@ class WP_Cleanify_Option_Page {
 			'_wp_cleanify_disable_rss_feed'         => '<div class="wp-cleanify-box-header">' . $disable_rss_feed . '<div class="wp-cleanify-box-content"><h3>Disable RSS Feed & Links</h3> <p>Disabling RSS feeds in WordPress enhances performance by reducing server load and streamlining content delivery.</p></div></div>',
 
 			'_wp_cleanify_redirect_feed'            => '<div class="wp-cleanify-box-header">' . $redirect_feeds . '<div class="wp-cleanify-box-content"><h3>Redirect Feed Url</h3> <p>The option redirects RSS feed requests to the main webpage, ensuring visitors access content directly, maintaining engagement, and avoiding accidental feed redirection.</p></div></div>',
+			
+			'_wp_cleanify_change_login_url'            => '<div class="wp-cleanify-box-header">' . $change_login_url_icon . '<div class="wp-cleanify-box-content"><h3>Change the login URL</h3><p>'.
+				site_url('/')
+			.'<input type="text" id="new_login_url" value="'.get_option( 'wp_cleanify_login_url' ).'"></p></div></div>',
 		);
 
 		foreach ( $checkbox_fields as $option => $label ) {
@@ -221,6 +228,7 @@ class WP_Cleanify_Option_Page {
 		// Get the option name and new value from the AJAX request
 		$option_name = isset( $_POST['option_name'] ) ? sanitize_key( $_POST['option_name'] ) : '';
 		$new_value   = isset( $_POST['new_value'] ) ? intval( $_POST['new_value'] ) : 0;
+		$new_login_url   = isset( $_POST['new_login_url'] ) ? $_POST['new_login_url'] : 'wp-admin';
 		// Get the existing options array
 		$options_array = get_option( 'wp_cleanify_options' );
 		// If the options array doesn't exist, create an empty array
@@ -231,6 +239,7 @@ class WP_Cleanify_Option_Page {
 		if ( ! isset( $options_array[ $option_name ] ) ) {
 			$options_array[ $option_name ] = $new_value;
 			update_option( 'wp_cleanify_options', $options_array );
+			update_option( 'wp_cleanify_login_url', $new_login_url );
 			wp_send_json_success( 'Option added successfully' );
 			return;
 		}

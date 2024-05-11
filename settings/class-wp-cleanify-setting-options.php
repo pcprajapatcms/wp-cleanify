@@ -39,6 +39,13 @@ class WP_Cleanify_Setting_Options {
 		add_action( 'init', array( $this, 'wp_cleanify_disable_heartbeat' ) );
 		add_action( 'init', array( $this, 'wp_cleanify_disable_restapi' ) );
 		add_action( 'init', array( $this, 'wp_cleanify_disable_rss_feed' ) );
+		add_action( 'init', array($this, 'wp_cleanify_redirect_on_custom_login_url') );
+		add_filter( 'lostpassword_url', array($this, 'wp_cleanify_customize_lost_password_url') );
+		add_filter( 'register_url', array($this, 'wp_cleanify_customize_register_url') );
+		add_action( 'wp_loaded', array($this, 'wp_cleanify_redirect_on_default_login_urls') );
+		add_action( 'wp_login_failed', array($this, 'wp_cleanify_redirect_to_custom_login_url_on_login_fail') );
+		add_filter( 'login_message', array($this, 'wp_cleanify_add_failed_login_message') );
+		add_action( 'wp_logout', array($this, 'wp_cleanify_redirect_to_custom_login_url_on_logout_success') );
 	}
 
 	/**
@@ -212,6 +219,147 @@ class WP_Cleanify_Setting_Options {
 			add_action( 'parse_query', 'wp_cleanify_redirect_feed_requests_to_original_page' );
 		}
 	}
+
+	/**
+	 * Custom Login URL
+	 */
+
+	public function wp_cleanify_redirect_on_custom_login_url() {
+		$options                   = get_option( 'wp_cleanify_options' );
+		$wp_cleanify_change_login_url = isset( $options['_wp_cleanify_change_login_url'] ) ? $options['_wp_cleanify_change_login_url'] : false;
+		if ( $wp_cleanify_change_login_url ) {
+			$wp_cleanify_login_url = get_option('wp_cleanify_login_url');
+			$url_input = sanitize_text_field( $_SERVER['REQUEST_URI'] );
+			// Make sure $url_input ends with /
+			if ( false !== strpos( $url_input, $wp_cleanify_login_url ) ) {
+				if ( substr( $url_input, -1 ) != '/' ) {
+					$url_input = $url_input . '/';
+				}
+			}
+			// If URL contains the custom login slug, redirect to the dashboard
+			if ( false !== strpos( $url_input, '/' . $wp_cleanify_login_url . '/' ) ) {
+				if ( is_user_logged_in() ) {
+					// Redirect to dashboard
+					wp_safe_redirect( get_admin_url() );
+				} else {
+					// Redirect to the login URL with custom login slug in the query parameters
+					wp_safe_redirect( site_url( '/wp-login.php?' . $wp_cleanify_login_url . '&redirect=false' ) );
+				}
+				exit;
+			}
+		}
+    }
+
+	public function wp_cleanify_customize_login_url( $lostpassword_url ) {
+		$options                   = get_option( 'wp_cleanify_options' );
+		$wp_cleanify_change_login_url = isset( $options['_wp_cleanify_change_login_url'] ) ? $options['_wp_cleanify_change_login_url'] : false;
+		if ( $wp_cleanify_change_login_url ) {
+			$wp_cleanify_login_url = get_option('wp_cleanify_login_url');
+			return home_url( '/' . $wp_cleanify_login_url . '/' );
+		}
+    }
+
+	public function wp_cleanify_customize_lost_password_url( $lostpassword_url ) {
+		$options                   = get_option( 'wp_cleanify_options' );
+		$wp_cleanify_change_login_url = isset( $options['_wp_cleanify_change_login_url'] ) ? $options['_wp_cleanify_change_login_url'] : false;
+		if ( $wp_cleanify_change_login_url ) {
+			$wp_cleanify_login_url = get_option('wp_cleanify_login_url');
+			return $lostpassword_url . '&' . $wp_cleanify_login_url;
+		}
+    }
+
+	public function wp_cleanify_customize_register_url( $registration_url ) {
+		$options                   = get_option( 'wp_cleanify_options' );
+		$wp_cleanify_change_login_url = isset( $options['_wp_cleanify_change_login_url'] ) ? $options['_wp_cleanify_change_login_url'] : false;
+		if ( $wp_cleanify_change_login_url ) {
+			$wp_cleanify_login_url = get_option('wp_cleanify_login_url');
+			// return home_url( '/wp-login.php?manage&action=lostpassword' );
+			return $registration_url . '&' . $wp_cleanify_login_url;
+		}
+    }
+
+	public function wp_cleanify_redirect_on_default_login_urls() {
+		$options                   = get_option( 'wp_cleanify_options' );
+		$wp_cleanify_change_login_url = isset( $options['_wp_cleanify_change_login_url'] ) ? $options['_wp_cleanify_change_login_url'] : false;
+		if ( $wp_cleanify_change_login_url ) {
+			global $wp_cleanify_login;
+			$wp_cleanify_login_url = get_option('wp_cleanify_login_url');
+			// e.g. manage
+			$url_input = sanitize_text_field( $_SERVER['REQUEST_URI'] );
+			$redirect_slug = '404';
+			// When logging in
+			if ( isset( $_POST['log'] ) && isset( $_POST['pwd'] ) || isset( $_POST['post_password'] ) || is_user_logged_in() ) {
+			} else {
+				// When landing on the login page
+				if ( false !== strpos( $url_input, 'wp-login' ) ) {
+					if ( isset( $_GET['action'] ) && ('logout' == $_GET['action'] || 'rp' == $_GET['action'] || 'resetpass' == $_GET['action']) || isset( $_GET['checkemail'] ) && ('confirm' == $_GET['checkemail'] || 'registered' == $_GET['checkemail']) || isset( $_GET['interim-login'] ) && '1' == $_GET['interim-login'] || 'success' == $wp_cleanify_login ) {
+					} elseif ( isset( $_GET['action'] ) && ('lostpassword' == $_GET['action'] || 'register' == $_GET['action']) ) {
+						// When resetting password or registering an account
+						if ( isset( $_POST['user_login'] ) ) {
+							// Sending the form to reset password or register an account...
+						} else {
+							// When landing on the password reset or registration form
+							if ( false === strpos( $url_input, $wp_cleanify_login_url ) ) {
+								// Redirect to /404/
+								wp_safe_redirect( home_url( $redirect_slug . '/' ), 302 );
+								exit;
+							}
+						}
+					} else {
+						if ( false === strpos( $url_input, $wp_cleanify_login_url ) ) {
+							// Redirect to /404/
+							wp_safe_redirect( home_url( $redirect_slug . '/' ), 302 );
+							exit;
+						}
+					}
+				}
+			}
+		}
+    }
+
+	public function wp_cleanify_redirect_to_custom_login_url_on_login_fail() {
+		$options                   = get_option( 'wp_cleanify_options' );
+		$wp_cleanify_change_login_url = isset( $options['_wp_cleanify_change_login_url'] ) ? $options['_wp_cleanify_change_login_url'] : false;
+		if ( $wp_cleanify_change_login_url ) {
+			global $asenha_limit_login;
+			$wp_cleanify_login_url = get_option('wp_cleanify_login_url');
+			if ( isset( $asenha_limit_login ) && is_array( $asenha_limit_login ) && $asenha_limit_login['within_lockout_period'] ) {
+				// Do nothing. This prevents redirection loop.
+			} else {
+				$should_redirect = true;
+				if ( $should_redirect ) {
+					// Append 'failed_login=true' so we can output custom error message above the login form
+					wp_safe_redirect( home_url( 'wp-login.php?' . $wp_cleanify_login_url . '&redirect=false&failed_login=true' ) );
+					exit;
+				}
+			}
+		}
+    }
+
+	public function wp_cleanify_add_failed_login_message( $message ) {
+		$options                   = get_option( 'wp_cleanify_options' );
+		$wp_cleanify_change_login_url = isset( $options['_wp_cleanify_change_login_url'] ) ? $options['_wp_cleanify_change_login_url'] : false;
+			if ( $wp_cleanify_change_login_url ) {
+			global $asenha_limit_login;
+			if ( isset( $_REQUEST['failed_login'] ) && $_REQUEST['failed_login'] == 'true' ) {
+				if ( is_null( $asenha_limit_login ) ) {
+					$message = '<div id="login_error" class="notice notice-error"><b>Error:</b> Invalid username/email or incorrect password.</div>';
+				}
+			}
+			return $message;
+		}
+    }
+
+	public function wp_cleanify_redirect_to_custom_login_url_on_logout_success() {
+		$options                   = get_option( 'wp_cleanify_options' );
+		$wp_cleanify_change_login_url = isset( $options['_wp_cleanify_change_login_url'] ) ? $options['_wp_cleanify_change_login_url'] : false;
+		if ( $wp_cleanify_change_login_url ) {
+			$wp_cleanify_login_url = get_option('wp_cleanify_login_url');
+			// Redirect to the login URL with custom login slug in it
+			wp_safe_redirect( home_url( 'wp-login.php?' . $wp_cleanify_login_url . '&redirect=false' ) );
+			exit;
+		}
+    }
 }
 
 /**
